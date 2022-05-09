@@ -1,15 +1,14 @@
-import { Recommendation } from "@prisma/client";
-import { recommendationRepository } from "../repositories/recommendationRepository.js";
-import { conflictError, notFoundError } from "../utils/errorUtils.js";
+import { Recommendation } from '@prisma/client';
+import { recommendationRepository } from '../repositories/recommendationRepository.js';
+import { conflictError, notFoundError } from '../utils/errorUtils.js';
 
-export type CreateRecommendationData = Omit<Recommendation, "id" | "score">;
+export type CreateRecommendationData = Omit<Recommendation, 'id' | 'score'>;
 
 async function insert(createRecommendationData: CreateRecommendationData) {
   const existingRecommendation = await recommendationRepository.findByName(
-    createRecommendationData.name
+    createRecommendationData.name,
   );
-  if (existingRecommendation)
-    throw conflictError("Recommendations names must be unique");
+  if (existingRecommendation) { throw conflictError('Recommendations names must be unique'); }
 
   await recommendationRepository.create(createRecommendationData);
 }
@@ -17,7 +16,7 @@ async function insert(createRecommendationData: CreateRecommendationData) {
 async function upvote(id: number) {
   await getByIdOrFail(id);
 
-  await recommendationRepository.updateScore(id, "increment");
+  await recommendationRepository.updateScore(id, 'increment');
 }
 
 async function downvote(id: number) {
@@ -25,7 +24,7 @@ async function downvote(id: number) {
 
   const updatedRecommendation = await recommendationRepository.updateScore(
     id,
-    "decrement"
+    'decrement',
   );
 
   if (updatedRecommendation.score < -5) {
@@ -61,7 +60,7 @@ async function getRandom() {
   return recommendations[randomIndex];
 }
 
-async function getByScore(scoreFilter: "gt" | "lte") {
+async function getByScore(scoreFilter: 'gt' | 'lte') {
   const recommendations = await recommendationRepository.findAll({
     score: 10,
     scoreFilter,
@@ -76,10 +75,10 @@ async function getByScore(scoreFilter: "gt" | "lte") {
 
 function getScoreFilter(random: number) {
   if (random < 0.7) {
-    return "gt";
+    return 'gt';
   }
 
-  return "lte";
+  return 'lte';
 }
 
 export const recommendationService = {
@@ -90,4 +89,6 @@ export const recommendationService = {
   get,
   getById: getByIdOrFail,
   getTop,
+  getScoreFilter,
+  getByScore,
 };
