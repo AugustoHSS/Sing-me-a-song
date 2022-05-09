@@ -7,7 +7,8 @@
   "scripts": {
     "test": "NODE_OPTIONS=--experimental-vm-modules dotenv -e .env.test jest -i",
     "dev": "nodemon src/server.ts",
-    "testc": "NODE_OPTIONS=--experimental-vm-modules jest --coverage"
+    "testc": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
+    "start-test" : "NODE_ENV=test npm run dev"
   },
   "keywords": [],
   "author": "",
